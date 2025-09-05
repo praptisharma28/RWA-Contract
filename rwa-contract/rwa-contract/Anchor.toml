@@ -12,7 +12,7 @@ rwa_contract = "4gBj3avgtDybWri9xiDQt7D3yaTiz3KbUysbVKq8Fcd4"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
