@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token_2022::TokenAccount;
+use anchor_spl::token_interface::TokenAccount;
 
 use crate::state::*;
 use crate::errors::ErrorCode;
@@ -118,10 +118,10 @@ pub struct ReportEmissions<'info> {
     pub industry: Account<'info, Industry>,
     
     #[account(
-        associated_token::mint = token_mint,
-        associated_token::authority = industry_authority,
+        token::mint = token_mint,
+        token::authority = industry_authority,
     )]
-    pub industry_token_account: Account<'info, TokenAccount>,
+    pub industry_token_account: Account<'info, anchor_spl::token_2022::spl_token_2022::state::Account>,
     
     /// CHECK: This is the token mint for carbon credits
     pub token_mint: AccountInfo<'info>,

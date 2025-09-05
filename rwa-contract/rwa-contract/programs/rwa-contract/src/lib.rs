@@ -12,9 +12,6 @@ use access_control::*;
 use carbon_credits::*;
 use industry::*;
 use auction::*;
-use state::*;
-use events::*;
-use errors::*;
 
 declare_id!("4gBj3avgtDybWri9xiDQt7D3yaTiz3KbUysbVKq8Fcd4");
 
@@ -22,7 +19,6 @@ declare_id!("4gBj3avgtDybWri9xiDQt7D3yaTiz3KbUysbVKq8Fcd4");
 pub mod carbon_rwa {
     use super::*;
 
-    // Access Control Instructions
     pub fn initialize_access_control(
         ctx: Context<InitializeAccessControl>,
         default_admin: Pubkey,
@@ -45,7 +41,6 @@ pub mod carbon_rwa {
         access_control::assign_user_to_role(ctx, user)
     }
 
-    // Carbon Credits Instructions
     pub fn initialize_carbon_token(
         ctx: Context<InitializeCarbonToken>,
         name: String,
@@ -75,7 +70,6 @@ pub mod carbon_rwa {
         carbon_credits::mint_carbon_credits(ctx, amount)
     }
 
-    // Industry Instructions
     pub fn onboard_industry(
         ctx: Context<OnboardIndustry>,
         company_name: String,
@@ -93,7 +87,6 @@ pub mod carbon_rwa {
         industry::report_emissions(ctx, co2_tonnes, reporting_period)
     }
 
-    // Auction Instructions
     pub fn create_dutch_auction(
         ctx: Context<CreateDutchAuction>,
         start_price: u64,

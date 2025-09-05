@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token_2022::{self, Token2022, TokenAccount, Mint};
-use anchor_spl::token_interface::{TokenInterface, MintTo, mint_to};
+use anchor_spl::token_2022::{self, Token2022};
+use anchor_spl::token_interface::{TokenInterface, MintTo, mint_to, TokenAccount, Mint};
 use anchor_spl::associated_token::AssociatedToken;
 
 use crate::state::*;
@@ -43,7 +43,6 @@ pub fn mint_carbon_credits(
     ctx: Context<MintCarbonCredits>,
     amount: u64,
 ) -> Result<()> {
-    // Check if user has MINT_AUTHORITY role
     require!(
         has_role(&ctx.accounts.mint_authority_role, &ctx.accounts.mint_authority.key(), "MINT_AUTHORITY"),
         ErrorCode::InsufficientPermissions
@@ -94,8 +93,9 @@ pub struct InitializeCarbonToken<'info> {
         payer = payer,
         mint::decimals = 0,
         mint::authority = authority,
+        mint::token_program = token_program,
     )]
-    pub mint: Account<'info, Mint>,
+    pub mint: InterfaceAccount<'info, Mint>,
     
     #[account(
         seeds = [b"user_role", b"MINT_AUTHORITY"],
@@ -121,14 +121,15 @@ pub struct MintCarbonCredits<'info> {
     pub carbon_token: Account<'info, CarbonToken>,
     
     #[account(mut)]
-    pub mint: Account<'info, Mint>,
+    pub mint: Account<'info, anchor_spl::token_2022::spl_token_2022::state::Mint>,
     
     #[account(
         mut,
-        associated_token::mint = mint,
-        associated_token::authority = recipient,
+        token::mint = mint,
+        token::authority = recipient,
+        token::token_program = token_program,
     )]
-    pub token_account: Account<'info, TokenAccount>,
+    pub token_account: Account<'info, anchor_spl::token_2022::spl_token_2022::state::Account>,
     
     #[account(
         seeds = [b"user_role", b"MINT_AUTHORITY"],
