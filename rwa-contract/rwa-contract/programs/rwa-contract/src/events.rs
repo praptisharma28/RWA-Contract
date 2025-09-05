@@ -1,7 +1,6 @@
 use anchor_lang::prelude::*;
 use crate::state::ComplianceStatus;
 
-
 #[event]
 pub struct CarbonCreditsMinted {
     pub mint: Pubkey,

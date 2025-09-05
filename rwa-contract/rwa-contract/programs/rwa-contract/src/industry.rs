@@ -1,10 +1,10 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token_interface::TokenAccount;
+use anchor_spl::token_2022::TokenAccount;
 
 use crate::state::*;
+use crate::errors::ErrorCode;
 use crate::events::{IndustryOnboarded, EmissionsReported};
 use crate::access_control::has_role;
-use crate::errors::ErrorCode;
 
 pub fn onboard_industry(
     ctx: Context<OnboardIndustry>,
@@ -19,8 +19,8 @@ pub fn onboard_industry(
 
     let industry = &mut ctx.accounts.industry;
     industry.authority = ctx.accounts.industry_authority.key();
-    industry.company_name = company_name.clone();
-    industry.registration_number = registration_number.clone();
+    industry.company_name = company_name;
+    industry.registration_number = registration_number;
     industry.bond_amount = bond_amount;
     industry.is_kyc_verified = true;
     industry.is_active = true;
@@ -29,10 +29,10 @@ pub fn onboard_industry(
     industry.compliance_status = ComplianceStatus::Compliant;
     industry.onboarding_date = Clock::get()?.unix_timestamp;
     industry.bump = ctx.bumps.industry;
-    
+
     emit!(IndustryOnboarded {
         industry: ctx.accounts.industry_authority.key(),
-        company_name,
+        company_name: industry.company_name.clone(),
         bond_amount,
         timestamp: industry.onboarding_date,
     });
@@ -48,23 +48,25 @@ pub fn report_emissions(
     let industry = &mut ctx.accounts.industry;
     require!(industry.is_active, ErrorCode::IndustryNotActive);
     require!(industry.authority == ctx.accounts.industry_authority.key(), ErrorCode::Unauthorized);
-    
+
     industry.total_emissions = industry.total_emissions.checked_add(co2_tonnes).unwrap();
+
     let current_balance = ctx.accounts.industry_token_account.amount;
     
     if current_balance >= co2_tonnes {
         industry.credits_burned = industry.credits_burned.checked_add(co2_tonnes).unwrap();
-
+        
         emit!(EmissionsReported {
             industry: ctx.accounts.industry_authority.key(),
             co2_tonnes,
             credits_burned: co2_tonnes,
-            reporting_period: reporting_period.clone(),
+            reporting_period,
             compliance_status: ComplianceStatus::Compliant,
             timestamp: Clock::get()?.unix_timestamp,
         });
     } else {
         industry.compliance_status = ComplianceStatus::NonCompliant;
+        
         emit!(EmissionsReported {
             industry: ctx.accounts.industry_authority.key(),
             co2_tonnes,
@@ -74,7 +76,7 @@ pub fn report_emissions(
             timestamp: Clock::get()?.unix_timestamp,
         });
     }
-    
+
     Ok(())
 }
 
@@ -96,12 +98,13 @@ pub struct OnboardIndustry<'info> {
     )]
     pub kyc_authority_role: Account<'info, UserRole>,
     
+    /// CHECK: This is the industry's authority
     pub industry_authority: AccountInfo<'info>,
+    
     pub authority: Signer<'info>,
     
     #[account(mut)]
     pub payer: Signer<'info>,
-    
     pub system_program: Program<'info, System>,
 }
 
@@ -118,8 +121,10 @@ pub struct ReportEmissions<'info> {
         associated_token::mint = token_mint,
         associated_token::authority = industry_authority,
     )]
-    pub industry_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub industry_token_account: Account<'info, TokenAccount>,
     
+    /// CHECK: This is the token mint for carbon credits
     pub token_mint: AccountInfo<'info>,
+    
     pub industry_authority: Signer<'info>,
 }
