@@ -1,12 +1,12 @@
 use anchor_lang::prelude::*;
 
-mod access_control;
-mod carbon_credits;
-mod industry;
-mod auction;
-mod state;
-mod events;
-mod errors;
+pub mod access_control;
+pub mod carbon_credits;
+pub mod industry;
+pub mod auction;
+pub mod state;
+pub mod events;
+pub mod errors;
 
 use access_control::*;
 use carbon_credits::*;
@@ -16,7 +16,7 @@ use auction::*;
 declare_id!("4gBj3avgtDybWri9xiDQt7D3yaTiz3KbUysbVKq8Fcd4");
 
 #[program]
-pub mod carbon_rwa {
+pub mod rwa_contract {
     use super::*;
 
     pub fn initialize_access_control(

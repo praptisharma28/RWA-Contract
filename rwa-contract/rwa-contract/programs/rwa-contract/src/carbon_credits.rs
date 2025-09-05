@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token_2022::{self, Token2022};
 use anchor_spl::token_interface::{TokenInterface, MintTo, mint_to, TokenAccount, Mint};
 use anchor_spl::associated_token::AssociatedToken;
 
@@ -107,7 +106,7 @@ pub struct InitializeCarbonToken<'info> {
     
     #[account(mut)]
     pub payer: Signer<'info>,
-    pub token_program: Program<'info, Token2022>,
+    pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
 }
 
@@ -121,15 +120,15 @@ pub struct MintCarbonCredits<'info> {
     pub carbon_token: Account<'info, CarbonToken>,
     
     #[account(mut)]
-    pub mint: Account<'info, anchor_spl::token_2022::spl_token_2022::state::Mint>,
+    pub mint: InterfaceAccount<'info, Mint>,
     
     #[account(
         mut,
-        token::mint = mint,
-        token::authority = recipient,
-        token::token_program = token_program,
+        associated_token::mint = mint,
+        associated_token::authority = recipient,
+        associated_token::token_program = token_program,
     )]
-    pub token_account: Account<'info, anchor_spl::token_2022::spl_token_2022::state::Account>,
+    pub token_account: InterfaceAccount<'info, TokenAccount>,
     
     #[account(
         seeds = [b"user_role", b"MINT_AUTHORITY"],
@@ -141,5 +140,7 @@ pub struct MintCarbonCredits<'info> {
     pub recipient: AccountInfo<'info>,
     
     pub mint_authority: Signer<'info>,
-    pub token_program: Program<'info, Token2022>,
+    pub token_program: Interface<'info, TokenInterface>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub system_program: Program<'info, System>,
 }

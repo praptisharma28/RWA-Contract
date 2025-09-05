@@ -98,7 +98,7 @@ pub struct OnboardIndustry<'info> {
     )]
     pub kyc_authority_role: Account<'info, UserRole>,
     
-    /// CHECK: This is the industry's authority
+    /// CHECK: This is the industry's authority public key
     pub industry_authority: AccountInfo<'info>,
     
     pub authority: Signer<'info>,
@@ -120,11 +120,15 @@ pub struct ReportEmissions<'info> {
     #[account(
         token::mint = token_mint,
         token::authority = industry_authority,
+        token::token_program = token_program,
     )]
-    pub industry_token_account: Account<'info, anchor_spl::token_2022::spl_token_2022::state::Account>,
+    pub industry_token_account: InterfaceAccount<'info, TokenAccount>,
     
     /// CHECK: This is the token mint for carbon credits
     pub token_mint: AccountInfo<'info>,
     
     pub industry_authority: Signer<'info>,
+    
+    /// CHECK: This account is used to specify the token program interface
+    pub token_program: AccountInfo<'info>,
 }
