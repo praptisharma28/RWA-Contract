@@ -104,7 +104,7 @@ The system defines three primary roles:
 4. Tokens are automatically allocated upon successful bids
 5. Auction closes when all tokens are sold or time expires
 
-## 📊 Events & Monitoring
+## Events & Monitoring
 
 The contract emits comprehensive events for all major operations:
 
