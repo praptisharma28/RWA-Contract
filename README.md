@@ -7,6 +7,8 @@ A comprehensive Solana-based smart contract system for managing Real World Asset
 
 This contract provides a complete ecosystem for carbon credit tokenization, industry onboarding with KYC verification, emissions tracking, and automated compliance monitoring. It enables transparent trading of carbon credits through Dutch auctions while maintaining regulatory compliance.
 
+Read, the [blog](https://medium.com/@subhajitchaudhury05/dive-into-an-rwa-contract-with-token-extensions-418886da4203) by [Subh](https://github.com/subhdotsol) on RWA-Contract using Token-2022 extenion on this project.
+
 ## Deployment
 
 **Network:** Solana Devnet  
